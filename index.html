@@ -1,0 +1,27 @@
+<!-- save as index.html and deploy somewhere, e.g., Vercel -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Redirecting...</title>
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const ref = urlParams.get('ref') || '';
+    const deepLink = `huluorder://register?ref=${encodeURIComponent(ref)}`;
+
+    // Try to open the app
+    window.location.href = deepLink;
+
+    // If app doesn't open in 1 second, show fallback
+    setTimeout(() => {
+      document.body.innerHTML = `
+        <h2>HuluOrder</h2>
+        <p>Open this link on your phone with the HuluOrder app installed.</p>
+        <p>Referral code: <strong>${ref}</strong></p>
+        <p>If you don't have the app, ask the sender for the APK or wait for app store release.</p>
+      `;
+    }, 1000);
+  </script>
+</head>
+<body></body>
+</html>
