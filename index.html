@@ -1,27 +1,86 @@
-<!-- save as index.html and deploy somewhere, e.g., Vercel -->
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Redirecting...</title>
-  <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const ref = urlParams.get('ref') || '';
-    const deepLink = `huluorder://register?ref=${encodeURIComponent(ref)}`;
-
-    // Try to open the app
-    window.location.href = deepLink;
-
-    // If app doesn't open in 1 second, show fallback
-    setTimeout(() => {
-      document.body.innerHTML = `
-        <h2>HuluOrder</h2>
-        <p>Open this link on your phone with the HuluOrder app installed.</p>
-        <p>Referral code: <strong>${ref}</strong></p>
-        <p>If you don't have the app, ask the sender for the APK or wait for app store release.</p>
-      `;
-    }, 1000);
-  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HuluOrder – Referral</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      padding: 20px;
+      text-align: center;
+      background: #f9f9f9;
+      color: #333;
+    }
+    .container {
+      max-width: 500px;
+      margin: 40px auto;
+    }
+    .code {
+      background: #eee;
+      padding: 10px;
+      border-radius: 6px;
+      font-weight: bold;
+      margin: 15px 0;
+      word-break: break-all;
+    }
+  </style>
 </head>
-<body><p>Still here ha ha</p></body>
+<body>
+  <div class="container">
+    <h2>🔗 HuluOrder Invite</h2>
+    <p id="status">Opening app...</p>
+    <p class="code" id="codeDisplay" style="display:none;"></p>
+    <p id="fallback" style="display:none;">
+      If the app doesn’t open:<br>
+      1. Make sure you have <strong>HuluOrder</strong> installed<br>
+      2. Copy the code above and enter it during signup
+    </p>
+  </div>
+
+  <script>
+    // Wait for DOM to be ready
+    document.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const ref = urlParams.get('ref') || '';
+
+      const statusEl = document.getElementById('status');
+      const codeEl = document.getElementById('codeDisplay');
+      const fallbackEl = document.getElementById('fallback');
+
+      if (ref) {
+        codeEl.textContent = ref;
+        codeEl.style.display = 'block';
+      }
+
+      // Only try deep link if on mobile
+      const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+      if (isMobile && ref) {
+        // Attempt to open the app
+        const deepLink = `huluorder://register?ref=${encodeURIComponent(ref)}`;
+        
+        // Start fallback timer immediately
+        const fallbackTimeout = setTimeout(() => {
+          statusEl.textContent = 'App not found';
+          fallbackEl.style.display = 'block';
+        }, 2000);
+
+        // Try to open app
+        window.location.href = deepLink;
+
+        // If page becomes visible again (user returned from failed app open), show fallback
+        document.addEventListener('visibilitychange', () => {
+          if (!document.hidden) {
+            clearTimeout(fallbackTimeout);
+            statusEl.textContent = 'App not found';
+            fallbackEl.style.display = 'block';
+          }
+        });
+      } else {
+        statusEl.textContent = 'Open this link on your phone';
+        fallbackEl.style.display = 'block';
+      }
+    });
+  </script>
+</body>
 </html>
