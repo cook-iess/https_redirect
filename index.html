@@ -63,7 +63,7 @@
         const fallbackTimeout = setTimeout(() => {
           statusEl.textContent = 'App not found';
           fallbackEl.style.display = 'block';
-        }, 2000);
+        }, 5000);
 
         // Try to open app
         window.location.href = deepLink;
