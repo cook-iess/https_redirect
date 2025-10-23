@@ -57,7 +57,7 @@
       const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
       if (isMobile && ref) {
         // Attempt to open the app
-        const deepLink = `huluorder://register?ref=${encodeURIComponent(ref)}`;
+        const deepLink = `huluorder://Register?ref=${encodeURIComponent(ref)}`;
         
         // Start fallback timer immediately
         const fallbackTimeout = setTimeout(() => {
